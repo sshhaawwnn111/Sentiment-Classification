@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>
+        Steam review sentiment classification - HackMD
+    </title>
+    <link rel="icon" type="image/png" href="https://hackmd.io/favicon.png">
+    <link rel="apple-touch-icon" href="https://hackmd.io/apple-touch-icon.png">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha256-916EbMg70RQy9LHiGkXzG8hSg9EdNy97GazNG/aiY1w=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css" integrity="sha256-3iu9jgsy9TpTwXKb7bNQzqWekRX7pPK+2OLj3R922fo=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/octicons/3.5.0/octicons.min.css" integrity="sha256-QiWfLIsCT02Sdwkogf6YMiQlj4NE84MKkzEMkZnMGdg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.5.1/themes/prism.min.css" integrity="sha256-vtR0hSWRc3Tb26iuN2oZHt3KRUomwTufNIf5/4oeCyg=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@hackmd/emojify.js@2.1.0/dist/css/basic/emojify.min.css" integrity="sha256-UOrvMOsSDSrW6szVLe8ZDZezBxh5IoIfgTwdNDgTjiU=" crossorigin="anonymous" />
+    <style>
+        @import url(https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,500,500i|Source+Code+Pro:300,400,500|Source+Sans+Pro:300,300i,400,400i,600,600i|Source+Serif+Pro&subset=latin-ext);.hljs{display:block;background:#fff;padding:.5em;color:#333;overflow-x:auto}.hljs-comment,.hljs-meta{color:#969896}.hljs-emphasis,.hljs-quote,.hljs-string,.hljs-strong,.hljs-template-variable,.hljs-variable{color:#df5000}.hljs-keyword,.hljs-selector-tag,.hljs-type{color:#a71d5d}.hljs-attribute,.hljs-bullet,.hljs-literal,.hljs-number,.hljs-symbol{color:#0086b3}.hljs-built_in,.hljs-builtin-name{color:#005cc5}.hljs-name,.hljs-section{color:#63a35c}.hljs-tag{color:#333}.hljs-attr,.hljs-selector-attr,.hljs-selector-class,.hljs-selector-id,.hljs-selector-pseudo,.hljs-title{color:#795da3}.hljs-addition{color:#55a532;background-color:#eaffea}.hljs-deletion{color:#bd2c00;background-color:#ffecec}.hljs-link{text-decoration:underline}.markdown-body{font-size:16px;line-height:1.5;word-wrap:break-word}.markdown-body:after,.markdown-body:before{display:table;content:""}.markdown-body:after{clear:both}.markdown-body>:first-child{margin-top:0!important}.markdown-body>:last-child{margin-bottom:0!important}.markdown-body a:not([href]){color:inherit;text-decoration:none}.markdown-body .absent{color:#c00}.markdown-body .anchor{float:left;padding-right:4px;margin-left:-20px;line-height:1}.markdown-body .anchor:focus{outline:none}.markdown-body blockquote,.markdown-body dl,.markdown-body ol,.markdown-body p,.markdown-body pre,.markdown-body table,.markdown-body ul{margin-top:0;margin-bottom:16px}.markdown-body hr{height:.25em;padding:0;margin:24px 0;background-color:#e7e7e7;border:0}.markdown-body blockquote{font-size:16px;padding:0 1em;color:#777;border-left:.25em solid #ddd}.markdown-body blockquote>:first-child{margin-top:0}.markdown-body blockquote>:last-child{margin-bottom:0}.markdown-body kbd,.popover kbd{display:inline-block;padding:3px 5px;font-size:11px;line-height:10px;color:#555;vertical-align:middle;background-color:#fcfcfc;border:1px solid #ccc;border-bottom-color:#bbb;border-radius:3px;box-shadow:inset 0 -1px 0 #bbb}.markdown-body .loweralpha{list-style-type:lower-alpha}.markdown-body h1,.markdown-body h2,.markdown-body h3,.markdown-body h4,.markdown-body h5,.markdown-body h6{margin-top:24px;margin-bottom:16px;font-weight:600;line-height:1.25}.markdown-body h1 .octicon-link,.markdown-body h2 .octicon-link,.markdown-body h3 .octicon-link,.markdown-body h4 .octicon-link,.markdown-body h5 .octicon-link,.markdown-body h6 .octicon-link{color:#000;vertical-align:middle;visibility:hidden}.markdown-body h1:hover .anchor,.markdown-body h2:hover .anchor,.markdown-body h3:hover .anchor,.markdown-body h4:hover .anchor,.markdown-body h5:hover .anchor,.markdown-body h6:hover .anchor{text-decoration:none}.markdown-body h1:hover .anchor .octicon-link,.markdown-body h2:hover .anchor .octicon-link,.markdown-body h3:hover .anchor .octicon-link,.markdown-body h4:hover .anchor .octicon-link,.markdown-body h5:hover .anchor .octicon-link,.markdown-body h6:hover .anchor .octicon-link{visibility:visible}.markdown-body h1 code,.markdown-body h1 tt,.markdown-body h2 code,.markdown-body h2 tt,.markdown-body h3 code,.markdown-body h3 tt,.markdown-body h4 code,.markdown-body h4 tt,.markdown-body h5 code,.markdown-body h5 tt,.markdown-body h6 code,.markdown-body h6 tt{font-size:inherit}.markdown-body h1{font-size:2em}.markdown-body h1,.markdown-body h2{padding-bottom:.3em;border-bottom:1px solid #eee}.markdown-body h2{font-size:1.5em}.markdown-body h3{font-size:1.25em}.markdown-body h4{font-size:1em}.markdown-body h5{font-size:.875em}.markdown-body h6{font-size:.85em;color:#777}.markdown-body ol,.markdown-body ul{padding-left:2em}.markdown-body ol.no-list,.markdown-body ul.no-list{padding:0;list-style-type:none}.markdown-body ol ol,.markdown-body ol ul,.markdown-body ul ol,.markdown-body ul ul{margin-top:0;margin-bottom:0}.markdown-body li>p{margin-top:16px}.markdown-body li+li{padding-top:.25em}.markdown-body dl{padding:0}.markdown-body dl dt{padding:0;margin-top:16px;font-size:1em;font-style:italic;font-weight:700}.markdown-body dl dd{padding:0 16px;margin-bottom:16px}.markdown-body table{display:block;width:100%;overflow:auto;word-break:normal;word-break:keep-all}.markdown-body table th{font-weight:700}.markdown-body table td,.markdown-body table th{padding:6px 13px;border:1px solid #ddd}.markdown-body table tr{background-color:#fff;border-top:1px solid #ccc}.markdown-body table tr:nth-child(2n){background-color:#f8f8f8}.markdown-body img{max-width:100%;box-sizing:content-box;background-color:#fff}.markdown-body img[align=right]{padding-left:20px}.markdown-body img[align=left]{padding-right:20px}.markdown-body .emoji{max-width:none;vertical-align:text-top;background-color:transparent}.markdown-body span.frame{display:block;overflow:hidden}.markdown-body span.frame>span{display:block;float:left;width:auto;padding:7px;margin:13px 0 0;overflow:hidden;border:1px solid #ddd}.markdown-body span.frame span img{display:block;float:left}.markdown-body span.frame span span{display:block;padding:5px 0 0;clear:both;color:#333}.markdown-body span.align-center{display:block;overflow:hidden;clear:both}.markdown-body span.align-center>span{display:block;margin:13px auto 0;overflow:hidden;text-align:center}.markdown-body span.align-center span img{margin:0 auto;text-align:center}.markdown-body span.align-right{display:block;overflow:hidden;clear:both}.markdown-body span.align-right>span{display:block;margin:13px 0 0;overflow:hidden;text-align:right}.markdown-body span.align-right span img{margin:0;text-align:right}.markdown-body span.float-left{display:block;float:left;margin-right:13px;overflow:hidden}.markdown-body span.float-left span{margin:13px 0 0}.markdown-body span.float-right{display:block;float:right;margin-left:13px;overflow:hidden}.markdown-body span.float-right>span{display:block;margin:13px auto 0;overflow:hidden;text-align:right}.markdown-body code,.markdown-body tt{padding:0;padding-top:.2em;padding-bottom:.2em;margin:0;font-size:85%;background-color:rgba(0,0,0,.04);border-radius:3px}.markdown-body code:after,.markdown-body code:before,.markdown-body tt:after,.markdown-body tt:before{letter-spacing:-.2em;content:"\00a0"}.markdown-body code br,.markdown-body tt br{display:none}.markdown-body del code{text-decoration:inherit}.markdown-body pre{word-wrap:normal}.markdown-body pre>code{padding:0;margin:0;font-size:100%;word-break:normal;white-space:pre;background:transparent;border:0}.markdown-body .highlight{margin-bottom:16px}.markdown-body .highlight pre{margin-bottom:0;word-break:normal}.markdown-body .highlight pre,.markdown-body pre{padding:16px;overflow:auto;font-size:85%;line-height:1.45;background-color:#f7f7f7;border-radius:3px}.markdown-body pre code,.markdown-body pre tt{display:inline;max-width:auto;padding:0;margin:0;overflow:visible;line-height:inherit;word-wrap:normal;background-color:transparent;border:0}.markdown-body pre code:after,.markdown-body pre code:before,.markdown-body pre tt:after,.markdown-body pre tt:before{content:normal}.markdown-body .csv-data td,.markdown-body .csv-data th{padding:5px;overflow:hidden;font-size:12px;line-height:1;text-align:left;white-space:nowrap}.markdown-body .csv-data .blob-line-num{padding:10px 8px 9px;text-align:right;background:#fff;border:0}.markdown-body .csv-data tr{border-top:0}.markdown-body .csv-data th{font-weight:700;background:#f8f8f8;border-top:0}.news .alert .markdown-body blockquote{padding:0 0 0 40px;border:0 none}.activity-tab .news .alert .commits,.activity-tab .news .markdown-body blockquote{padding-left:0}.task-list-item{list-style-type:none}.task-list-item label{font-weight:400}.task-list-item.enabled label{cursor:pointer}.task-list-item+.task-list-item{margin-top:3px}.task-list-item-checkbox{float:left;margin:.31em 0 .2em -1.3em!important;vertical-align:middle;cursor:default!important}.markdown-body{padding-top:40px;padding-bottom:40px;max-width:758px;overflow:visible!important;position:relative}.markdown-body .emoji{vertical-align:top}.markdown-body pre{border:inherit!important}.markdown-body code{color:inherit!important}.markdown-body pre code .wrapper{display:-moz-inline-flex;display:-ms-inline-flex;display:-o-inline-flex;display:inline-flex}.markdown-body pre code .gutter{float:left;overflow:hidden;-webkit-user-select:none;user-select:none}.markdown-body pre code .gutter.linenumber{text-align:right;position:relative;display:inline-block;cursor:default;z-index:4;padding:0 8px 0 0;min-width:20px;box-sizing:content-box;color:#afafaf!important;border-right:3px solid #6ce26c!important}.markdown-body pre code .gutter.linenumber>span:before{content:attr(data-linenumber)}.markdown-body pre code .code{float:left;margin:0 0 0 16px}.markdown-body .gist .line-numbers{border-left:none;border-top:none;border-bottom:none}.markdown-body .gist .line-data{border:none}.markdown-body .gist table{border-spacing:0;border-collapse:inherit!important}.markdown-body code[data-gist-id]{background:none;padding:0}.markdown-body code[data-gist-id]:after,.markdown-body code[data-gist-id]:before{content:""}.markdown-body code[data-gist-id] .blob-num{border:unset}.markdown-body code[data-gist-id] table{overflow:unset;margin-bottom:unset}.markdown-body code[data-gist-id] table tr{background:unset}.markdown-body[dir=rtl] pre{direction:ltr}.markdown-body[dir=rtl] code{direction:ltr;unicode-bidi:embed}.markdown-body .alert>p:last-child{margin-bottom:0}.markdown-body pre.abc,.markdown-body pre.flow-chart,.markdown-body pre.graphviz,.markdown-body pre.mermaid,.markdown-body pre.sequence-diagram,.markdown-body pre.vega{text-align:center;background-color:inherit;border-radius:0;white-space:inherit;overflow:visible}.markdown-body pre.abc>code,.markdown-body pre.flow-chart>code,.markdown-body pre.graphviz>code,.markdown-body pre.mermaid>code,.markdown-body pre.sequence-diagram>code,.markdown-body pre.vega>code{text-align:left}.markdown-body pre.abc>svg,.markdown-body pre.flow-chart>svg,.markdown-body pre.graphviz>svg,.markdown-body pre.mermaid>svg,.markdown-body pre.sequence-diagram>svg,.markdown-body pre.vega>svg{max-width:100%;height:100%}.markdown-body pre>code.wrap{white-space:pre-wrap;white-space:-moz-pre-wrap;white-space:-pre-wrap;white-space:-o-pre-wrap;word-wrap:break-word}.markdown-body .alert>p:last-child,.markdown-body .alert>ul:last-child{margin-bottom:0}.markdown-body summary{display:list-item}.markdown-body summary:focus{outline:none}.markdown-body details summary{cursor:pointer}.markdown-body details:not([open])>:not(summary){display:none}.markdown-body figure{margin:1em 40px}.markdown-body .mark,.markdown-body mark{background-color:#fff1a7}.vimeo,.youtube{cursor:pointer;display:table;text-align:center;background-position:50%;background-repeat:no-repeat;background-size:contain;background-color:#000;overflow:hidden}.vimeo,.youtube{position:relative;width:100%}.youtube{padding-bottom:56.25%}.vimeo img{width:100%;object-fit:contain;z-index:0}.youtube img{object-fit:cover;z-index:0}.vimeo iframe,.youtube iframe,.youtube img{width:100%;height:100%;position:absolute;top:0;left:0}.vimeo iframe,.youtube iframe{vertical-align:middle;z-index:1}.vimeo .icon,.youtube .icon{position:absolute;height:auto;width:auto;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;opacity:.3;transition:opacity .2s;z-index:0}.vimeo:hover .icon,.youtube:hover .icon{opacity:.6;transition:opacity .2s}.slideshare .inner,.speakerdeck .inner{position:relative;width:100%}.slideshare .inner iframe,.speakerdeck .inner iframe{position:absolute;top:0;bottom:0;left:0;right:0;width:100%;height:100%}.figma{display:table;position:relative;width:100%;padding-bottom:56.25%}.figma iframe{position:absolute;top:0;bottom:0;left:0;right:0;width:100%;height:100%;border:1px solid #eee}.MJX_Assistive_MathML{display:none}#MathJax_Message{z-index:1000!important}.ui-infobar{position:relative;z-index:2;max-width:760px;margin:25px auto -25px;color:#777}.toc .invisable-node{list-style-type:none}.ui-toc{position:fixed;bottom:20px;z-index:998}.ui-toc.both-mode{margin-left:8px}.ui-toc.both-mode .ui-toc-label{height:40px;padding:10px 4px;border-top-left-radius:0;border-bottom-left-radius:0}.ui-toc-label{background-color:#e6e6e6;border:none;color:#868686;transition:opacity .2s}.ui-toc .open .ui-toc-label{opacity:1;color:#fff;transition:opacity .2s}.ui-toc-label:focus{opacity:.3;background-color:#ccc;color:#000}.ui-toc-label:hover{opacity:1;background-color:#ccc;transition:opacity .2s}.ui-toc-dropdown{margin-top:20px;margin-bottom:20px;padding-left:10px;padding-right:10px;max-width:45vw;width:25vw;max-height:70vh;overflow:auto;text-align:inherit}.ui-toc-dropdown>.toc{max-height:calc(70vh - 100px);overflow:auto}.ui-toc-dropdown[dir=rtl] .nav{padding-right:0;letter-spacing:.0029em}.ui-toc-dropdown a{overflow:hidden;text-overflow:ellipsis;white-space:pre}.ui-toc-dropdown .nav>li>a{display:block;padding:4px 20px;font-size:13px;font-weight:500;color:#767676}.ui-toc-dropdown .nav>li:first-child:last-child>ul,.ui-toc-dropdown .toc.expand ul{display:block}.ui-toc-dropdown .nav>li>a:focus,.ui-toc-dropdown .nav>li>a:hover{padding-left:19px;color:#000;text-decoration:none;background-color:transparent;border-left:1px solid #000}.ui-toc-dropdown[dir=rtl] .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav>li>a:hover{padding-right:19px;border-left:none;border-right:1px solid #000}.ui-toc-dropdown .nav>.active:focus>a,.ui-toc-dropdown .nav>.active:hover>a,.ui-toc-dropdown .nav>.active>a{padding-left:18px;font-weight:700;color:#000;background-color:transparent;border-left:2px solid #000}.ui-toc-dropdown[dir=rtl] .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav>.active>a{padding-right:18px;border-left:none;border-right:2px solid #000}.ui-toc-dropdown .nav .nav{display:none;padding-bottom:10px}.ui-toc-dropdown .nav>.active>ul{display:block}.ui-toc-dropdown .nav .nav>li>a{padding-top:1px;padding-bottom:1px;padding-left:30px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a{padding-right:30px}.ui-toc-dropdown .nav .nav>li>ul>li>a{padding-top:1px;padding-bottom:1px;padding-left:40px;font-size:12px;font-weight:400}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a{padding-right:40px}.ui-toc-dropdown .nav .nav>li>a:focus,.ui-toc-dropdown .nav .nav>li>a:hover{padding-left:29px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>a:hover{padding-right:29px}.ui-toc-dropdown .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown .nav .nav>li>ul>li>a:hover{padding-left:39px}.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:focus,.ui-toc-dropdown[dir=rtl] .nav .nav>li>ul>li>a:hover{padding-right:39px}.ui-toc-dropdown .nav .nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>a{padding-left:28px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>a{padding-right:28px}.ui-toc-dropdown .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown .nav .nav>.active>.nav>.active>a{padding-left:38px;font-weight:500}.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:focus>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active:hover>a,.ui-toc-dropdown[dir=rtl] .nav .nav>.active>.nav>.active>a{padding-right:38px}.markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,sans-serif}html[lang^=ja] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .markdown-body{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html .markdown-body[lang^=ja]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html .markdown-body[lang=zh-tw]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html .markdown-body[lang=zh-cn]{font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica Neue,Helvetica,Roboto,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}html[lang^=ja] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html[lang=zh-tw] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html[lang=zh-cn] .ui-toc-dropdown{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}html .ui-toc-dropdown[lang^=ja]{font-family:Source Sans Pro,Helvetica,Arial,Meiryo UI,MS PGothic,ＭＳ\ Ｐゴシック,sans-serif}html .ui-toc-dropdown[lang=zh-tw]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft JhengHei UI,微軟正黑UI,sans-serif}html .ui-toc-dropdown[lang=zh-cn]{font-family:Source Sans Pro,Helvetica,Arial,Microsoft YaHei UI,微软雅黑UI,sans-serif}.ui-affix-toc{position:fixed;top:0;max-width:15vw;max-height:70vh;overflow:auto}.back-to-top,.expand-toggle,.go-to-bottom{display:block;padding:4px 10px;margin-top:10px;margin-left:10px;font-size:12px;font-weight:500;color:#999}.back-to-top:focus,.back-to-top:hover,.expand-toggle:focus,.expand-toggle:hover,.go-to-bottom:focus,.go-to-bottom:hover{color:#563d7c;text-decoration:none}.back-to-top,.go-to-bottom{margin-top:0}.ui-user-icon{width:20px;height:20px;display:block;border-radius:50%;margin-top:2px;margin-bottom:2px;margin-right:5px;background-position:50%;background-repeat:no-repeat;background-size:cover}.ui-user-icon.small{width:18px;height:18px;display:inline-block;vertical-align:middle;margin:0 0 .2em}.ui-infobar>small>span{line-height:22px}.ui-infobar>small .dropdown{display:inline-block}.ui-infobar>small .dropdown a:focus,.ui-infobar>small .dropdown a:hover{text-decoration:none}.ui-more-info{color:#888;cursor:pointer;vertical-align:middle}.ui-more-info .fa{font-size:16px}.ui-connectedGithub,.ui-published-note{color:#888}.ui-connectedGithub{line-height:23px;white-space:nowrap}.ui-connectedGithub a.file-path{color:#888;text-decoration:none;padding-left:22px}.ui-connectedGithub a.file-path:active,.ui-connectedGithub a.file-path:hover{color:#888;text-decoration:underline}.ui-connectedGithub .fa{font-size:20px}.ui-published-note .fa{font-size:20px;vertical-align:top}.unselectable{-webkit-user-select:none;-o-user-select:none;user-select:none}.selectable{-webkit-user-select:text;-o-user-select:text;user-select:text}@media print{blockquote,div,img,pre,table{page-break-inside:avoid!important}a[href]:after{font-size:12px!important}}.markdown-body.slides{position:relative;z-index:1;color:#222}.markdown-body.slides:before{content:"";display:block;position:absolute;top:0;left:0;right:0;bottom:0;z-index:-1;background-color:currentColor;box-shadow:0 0 0 50vw}.markdown-body.slides section[data-markdown]{position:relative;margin-bottom:1.5em;background-color:#fff;text-align:center}.markdown-body.slides section[data-markdown] code{text-align:left}.markdown-body.slides section[data-markdown]:before{content:"";display:block;padding-bottom:56.23%}.markdown-body.slides section[data-markdown]>div:first-child{position:absolute;top:50%;left:1em;right:1em;transform:translateY(-50%);max-height:100%;overflow:hidden}.markdown-body.slides section[data-markdown]>ul{display:inline-block}.markdown-body.slides>section>section+section:after{content:"";position:absolute;top:-1.5em;right:1em;height:1.5em;border:3px solid #777}.site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] .site-ui-font{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}body{font-smoothing:subpixel-antialiased!important;-webkit-font-smoothing:subpixel-antialiased!important;-moz-osx-font-smoothing:auto!important;text-shadow:0 0 1em transparent,1px 1px 1.2px rgba(0,0,0,.004);-webkit-overflow-scrolling:touch;letter-spacing:.025em;font-family:Source Sans Pro,Helvetica,Arial,sans-serif}html[lang^=ja] body{font-family:Source Sans Pro,Helvetica,Arial,Hiragino Kaku Gothic Pro,ヒラギノ角ゴ Pro W3,Osaka,Meiryo,メイリオ,MS Gothic,ＭＳ\ ゴシック,sans-serif}html[lang=zh-tw] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang TC,Microsoft JhengHei,微軟正黑,sans-serif}html[lang=zh-cn] body{font-family:Source Sans Pro,Helvetica,Arial,PingFang SC,Microsoft YaHei,微软雅黑,sans-serif}abbr[title]{border-bottom:none;text-decoration:underline;-webkit-text-decoration:underline dotted;text-decoration:underline dotted}abbr[data-original-title],abbr[title]{cursor:help}body.modal-open{overflow-y:auto;padding-right:0!important}
+    </style>
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.min.js" integrity="sha256-3Jy/GbSLrg0o9y5Z5n1uw0qxZECH7C6OQpVBgNFYa0g=" crossorigin="anonymous"></script>
+    	<script src="https://cdnjs.cloudflare.com/ajax/libs/respond.js/1.4.2/respond.min.js" integrity="sha256-g6iAfvZp+nDQ2TdTR/VVKJf3bGro4ub5fvWSWVRi2NE=" crossorigin="anonymous"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/es5-shim/4.5.9/es5-shim.min.js" integrity="sha256-8E4Is26QH0bD52WoQpcB+R/tcWQtpzlCojrybUd7Mxo=" crossorigin="anonymous"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <div id="doc" class="markdown-body container-fluid comment-enabled" data-hard-breaks="true"><h1 id="Steam-review-sentiment-classification" data-id="Steam-review-sentiment-classification"><a class="anchor hidden-xs" href="#Steam-review-sentiment-classification" title="Steam-review-sentiment-classification"><span class="octicon octicon-link"></span></a><span>Steam review sentiment classification</span></h1><blockquote>
+<p><span>[王軒, 0816095]</span></p>
+</blockquote><h2 id="I-Introduction" data-id="I-Introduction"><a class="anchor hidden-xs" href="#I-Introduction" title="I-Introduction"><span class="octicon octicon-link"></span></a><span>I. Introduction:</span></h2><p><span>主要是因為對NLP有點興趣所以想嘗試看看做簡單的評論情緒分類。</span><br>
+<span>主要的想法是利用遊戲的tag結合這款遊戲的評論來預測這則評論是正面的還是負面的。匹如說一款恐怖遊戲的留言可能像這樣:“this is a terrifying game.”，文字中包含了terrifying這個字或許就是在誇獎這個恐怖遊戲"很恐怖"，因此是正面的，terrifying這個字在給小孩玩的遊戲上就不是個正面的詞語，這是我一開始的想法。</span></p><h2 id="II-Data-Collection" data-id="II-Data-Collection"><a class="anchor hidden-xs" href="#II-Data-Collection" title="II-Data-Collection"><span class="octicon octicon-link"></span></a><span>II. Data Collection</span></h2><p><span>dataset是從網路上爬下來的，而我爬資料的方式是先把steam store遊戲列上的前100款遊戲的所有屬性都抓下來，包含tag、genre、id、price或甚至是否打折。再從這100款遊戲去抓他們的評論。因為遊戲評論在絕大多數遊戲上都是正面的，所以一開始爬下來的dataset非常不平均。</span><br>
+<span>因此我後來決定自己挑選遊戲。去steam的網站把100款評論褒貶不一或特爛的遊戲網址全複製下來，然後把他們的屬性都抓下來，再把他們的評論都抓下來，就終於準備好我的dataset了。</span></p><p><span>爬steam評論的截圖:</span><br>
+<img src="https://i.imgur.com/nU908Lw.png" alt="" loading="lazy"></p><h2 id="III-Preprocessing" data-id="III-Preprocessing"><a class="anchor hidden-xs" href="#III-Preprocessing" title="III-Preprocessing"><span class="octicon octicon-link"></span></a><span>III. Preprocessing</span></h2><p><span>因為data爬下來是.jl檔，因此用pd.read_jason()把data讀進來並只留下需要的column，然後把所有有null的row都捨棄。</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span></div><div class="code">df1 = pd.read_json(<span class="hljs-string">'review.jl'</span>, lines=<span class="hljs-literal">True</span>)
+df2 = pd.read_json(<span class="hljs-string">'products.jl'</span>, lines=<span class="hljs-literal">True</span>)
+
+df1 = df1[[<span class="hljs-string">'product_id'</span>, <span class="hljs-string">'recommended'</span>, <span class="hljs-string">'text'</span>]]
+df1 = df1.dropna()
+
+df2[<span class="hljs-string">'tags'</span>] = df2[<span class="hljs-string">'tags'</span>].apply(<span class="hljs-string">','</span>.join)
+df2 = df2[[<span class="hljs-string">'id'</span>, <span class="hljs-string">'tags'</span>]]
+df2 = df2.dropna()
+df2 = df2.rename({<span class="hljs-string">'id'</span>:<span class="hljs-string">'product_id'</span>}, axis=<span class="hljs-string">'columns'</span>)
+</div></div></code></pre><p><span>把pruduct的資料和review的資料用product_id join再一起，就形成一個有留言又有遊戲tag的data了。</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span></div><div class="code">df3=pd.merge(df2,df1,on=<span class="hljs-string">'product_id'</span>,how=<span class="hljs-string">'inner'</span>)
+df3 = df3.drop([<span class="hljs-string">'product_id'</span>], axis = <span class="hljs-number">1</span>)
+</div></div></code></pre><p><img src="https://i.imgur.com/f44xDIv.png" alt="" loading="lazy"></p><p><span>把所有包含非ascii碼的留言去除。</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span></div><div class="code">df3 = df3[df3.text.<span class="hljs-built_in">map</span>(<span class="hljs-keyword">lambda</span> x: x.isascii())]
+</div></div></code></pre><p><span>即使經過我的努力挑選，正面的評論的量還是佔了大多數，因此我決定再刪掉一些正面評論。</span></p><p><span>調整前及調整後對留言是正面和負面的畫出留言長度數量的長條圖:</span><br>
+<img src="https://i.imgur.com/ROhOxeg.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/IGgxiVf.png" alt="" loading="lazy"></p><p><span>調整前及調整後正面評論和負面評論的數量圓餅圖:</span><br>
+<img src="https://i.imgur.com/LoWuoly.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/7sbbltS.png" alt="" loading="lazy"></p><p><span>結果顯示最長的留言長達7993。</span><br>
+<img src="https://i.imgur.com/6VChsl8.png" alt="" loading="lazy"></p><p><span>在檢查data的時候有發現很多人都喜歡用點排出圖片的樣子，或是打一堆讚或倒讚，因此我推測許多過長的留言都是一些無意義的文字，為了防止干擾model把過長的留言去除。</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span></div><div class="code">df3 = df3[df3[<span class="hljs-string">'length_review'</span>]&lt;<span class="hljs-number">2000</span>]
+df3.describe()
+</div></div></code></pre><p><img src="https://i.imgur.com/nfcYZqM.png" alt="" loading="lazy"></p><p><span>我做了兩種preprocessing:</span></p><ul>
+<li><span>用tensorflow的tokenizer把文字都轉成數字，不一樣長的都補0。</span></li>
+<li><span>用sklean的TfidfVectorizer把文字的權重用詞語出現的頻率以及詞語在多少個data裡面出現來算出</span></li>
+</ul><p><span>因此總共有四種不同data可以比較:</span></p><ul>
+<li><span>遊戲tag及評論本身</span></li>
+<li><span>評論本身</span></li>
+<li><span>用tf-idf做遊戲tag及評論本身</span></li>
+<li><span>用tf-idf做評論本身</span></li>
+</ul><p><span>將每個文字編碼為數字，只取最常見的30000個字，在predict的時候沒看過的字都編碼為OOV。</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span></div><div class="code">tokenizer = Tokenizer(num_words = <span class="hljs-number">30000</span>, oov_token=<span class="hljs-string">"&lt;OOV&gt;"</span>)
+tokenizer.fit_on_texts(X_train[<span class="hljs-string">'text'</span>])
+tokenizer.fit_on_texts(X_train[<span class="hljs-string">'tags'</span>])
+word_index = tokenizer.word_index
+
+sequences = tokenizer.texts_to_sequences(X_train[<span class="hljs-string">'text'</span>])
+reviews = pad_sequences(sequences, padding=<span class="hljs-string">'post'</span>, maxlen=<span class="hljs-number">411</span>)
+</div></div></code></pre><p><span>用sklearn的TfidfVectorizer算出權重。</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span></div><div class="code">tf_idf = TfidfVectorizer()
+</div></div></code></pre><h2 id="IV-Models" data-id="IV-Models"><a class="anchor hidden-xs" href="#IV-Models" title="IV-Models"><span class="octicon octicon-link"></span></a><span>IV. Models</span></h2><p><span>我總共用了四個model:</span></p><ul>
+<li><span>Multinomial Naive Bayes</span></li>
+<li><span>Logistic Regression</span></li>
+<li><span>ANN</span></li>
+<li><span>Bidirectional Encoder Representations from Transformers(簡稱Bert)</span></li>
+</ul><h3 id="1-Without-tf-idf" data-id="1-Without-tf-idf"><a class="anchor hidden-xs" href="#1-Without-tf-idf" title="1-Without-tf-idf"><span class="octicon octicon-link"></span></a><span>1. Without tf-idf</span></h3><h4 id="I-Multinomial-Naive-Bayes" data-id="I-Multinomial-Naive-Bayes"><a class="anchor hidden-xs" href="#I-Multinomial-Naive-Bayes" title="I-Multinomial-Naive-Bayes"><span class="octicon octicon-link"></span></a><span>I. Multinomial Naive Bayes</span></h4><p><span>直接套sklearn的MultinomialNB:</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span></div><div class="code">mnb = MultinomialNB()
+mnb.fit(X_train_tf, y_train)
+</div></div></code></pre><p><img src="https://i.imgur.com/G8vSqy8.png" alt="" loading="lazy"><img src="https://i.imgur.com/KpI7BHj.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/hWY95oR.png" alt="" loading="lazy"><br>
+<span>出來的結果實在不盡理想，沒有遊戲tag的accuracy只有0.6395。</span><br>
+<span>有遊戲tag的accuracy也只有0.6435。</span><br>
+<span>但令我感到開心的是有遊戲tag的準確度是比較高的(雖然也只高一點點XD)，驗證了我一開始的想法。</span></p><h4 id="II-Logistic-Regression" data-id="II-Logistic-Regression"><a class="anchor hidden-xs" href="#II-Logistic-Regression" title="II-Logistic-Regression"><span class="octicon octicon-link"></span></a><span>II. Logistic Regression</span></h4><p><span>直接套sklearn的LogisticRegression:</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span></div><div class="code">lr=LogisticRegression()
+lr.fit(X_train_tf, y_train)
+</div></div></code></pre><p><img src="https://i.imgur.com/EE6VZzm.png" alt="" loading="lazy"><img src="https://i.imgur.com/CGOhzgh.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/T5xFDMI.png" alt="" loading="lazy"><br>
+<span>結果比Multinomial Naive Bayes稍微好一點</span><br>
+<span>有遊戲tag的準確度還是稍微高於沒有tag。</span></p><h4 id="III-ANN" data-id="III-ANN"><a class="anchor hidden-xs" href="#III-ANN" title="III-ANN"><span class="octicon octicon-link"></span></a><span>III. ANN</span></h4><p><span>基本上跟hw5差不多，只調了一點參數。使用adaptive learning rate比免overfit，在fit時放入validation data來觀察performance:</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span></div><div class="code"><span class="hljs-keyword">def</span> <span class="hljs-title function_">build_model</span>():
+    model = Sequential()
+    model.add(Dense(<span class="hljs-number">1024</span>, input_dim=X_train_tf.shape[<span class="hljs-number">1</span>], activation=<span class="hljs-string">'relu'</span>))
+    model.add(Dense(<span class="hljs-number">2</span>, activation=<span class="hljs-string">'softmax'</span>))
+    optimizer = keras.optimizers.Adam(learning_rate=<span class="hljs-number">5e-5</span>)
+    model.<span class="hljs-built_in">compile</span>(optimizer=optimizer, loss=<span class="hljs-string">'categorical_crossentropy'</span>, metrics=[<span class="hljs-string">'accuracy'</span>])
+    model.summary()
+    <span class="hljs-keyword">return</span> model
+
+
+
+<span class="hljs-built_in">print</span>(<span class="hljs-string">"Compile model ..."</span>)
+callback = tf.keras.callbacks.ReduceLROnPlateau(monitor=<span class="hljs-string">"val_accuracy"</span>, patience=<span class="hljs-number">2</span>, verbose=<span class="hljs-number">1</span>, factor=<span class="hljs-number">0.5</span>, min_lr=<span class="hljs-number">5e-5</span>)
+estimator = KerasClassifier(build_fn=build_model, epochs=<span class="hljs-number">5</span>, batch_size=<span class="hljs-number">512</span>)
+estimator.fit(X_train_tf, y_train, validation_data=(X_test_tf, y_test_transform), callbacks=[callback])
+</div></div></code></pre><p><img src="https://i.imgur.com/KGZJNPq.png" alt="" loading="lazy"><img src="https://i.imgur.com/c6brM2E.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/FXqrfgZ.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/KTkCzJQ.png" alt="" loading="lazy"></p><p><span>結果是最爛的，</span><s><span>有可能是我不會調model。</span></s><br>
+<span>有遊戲tag的準確度還是稍微高於沒有tag。</span></p><h3 id="2-With-tf-idf" data-id="2-With-tf-idf"><a class="anchor hidden-xs" href="#2-With-tf-idf" title="2-With-tf-idf"><span class="octicon octicon-link"></span></a><span>2. With tf-idf</span></h3><h4 id="I-Multinomial-Naive-Bayes1" data-id="I-Multinomial-Naive-Bayes"><a class="anchor hidden-xs" href="#I-Multinomial-Naive-Bayes1" title="I-Multinomial-Naive-Bayes1"><span class="octicon octicon-link"></span></a><span>I. Multinomial Naive Bayes</span></h4><p><span>一樣直接套sklearn的MultinomialNB:</span><br>
+<img src="https://i.imgur.com/B7w2yM9.png" alt="" loading="lazy"><img src="https://i.imgur.com/t7bTq6Y.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/GSCB6Oy.png" alt="" loading="lazy"><br>
+<span>出來的結果直接跳一大階，雖然是意料之中的結果但還是很爽XD。</span><br>
+<span>但是經過tf-idf轉換後遊戲tag反而成為累贅了，沒有tag準確度遠高於有tag的data，我的猜測是經過轉換後因為tag中的字詞出現次數太多，匹如說"Action"或"First person shooter"很多遊戲都有這樣的tag，因此他們出現在幾乎所有的data中，導致權重非常低以至於成為像噪音的存在，最後反而導致performace降低。</span></p><h4 id="II-Logistic-Regression1" data-id="II-Logistic-Regression"><a class="anchor hidden-xs" href="#II-Logistic-Regression1" title="II-Logistic-Regression1"><span class="octicon octicon-link"></span></a><span>II. Logistic Regression</span></h4><p><span>一樣直接套sklearn的LogisticRegression:</span><br>
+<img src="https://i.imgur.com/BNH0DPn.png" alt="" loading="lazy"><img src="https://i.imgur.com/UaUOxxf.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/8yvfhWR.png" alt="" loading="lazy"><br>
+<span>Logistic Regression一樣又比MultinomialNB強了一點。</span><br>
+<span>因為一樣也是tf-idf所以有tag的performance也是低了點。</span><br>
+<span>不過0.87這數字幾乎可以說是可以跟人判得差不多準了。</span></p><h4 id="III-ANN1" data-id="III-ANN"><a class="anchor hidden-xs" href="#III-ANN1" title="III-ANN1"><span class="octicon octicon-link"></span></a><span>III. ANN</span></h4><p><img src="https://i.imgur.com/j895YkR.png" alt="" loading="lazy"><img src="https://i.imgur.com/516Fcki.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/ly1nmRr.png" alt="" loading="lazy"><br>
+<img src="https://i.imgur.com/erRUII8.png" alt="" loading="lazy"><br>
+<span>這次ANN的performance跟Logistic Regression不相上下甚至可以說是更好，都達到了0.87的accuracy，但ANN的f1 score不論有沒有tag都比Logistic Regression還高。</span></p><h3 id="Bidirectional-Encoder-Representations-from-Transformers簡稱Bert" data-id="Bidirectional-Encoder-Representations-from-Transformers簡稱Bert"><a class="anchor hidden-xs" href="#Bidirectional-Encoder-Representations-from-Transformers簡稱Bert" title="Bidirectional-Encoder-Representations-from-Transformers簡稱Bert"><span class="octicon octicon-link"></span></a><span>Bidirectional Encoder Representations from Transformers(簡稱Bert)</span></h3><p><span>要做NLP一定會先想到NLP界的巨人Bert，因此我也想來嘗試試看Bert的威力，因為training過程太久因此單獨做，並沒有使用結合遊戲tag的方式，單純用評論本身去判斷。</span></p><h4 id="I-Preprocessing" data-id="I-Preprocessing"><a class="anchor hidden-xs" href="#I-Preprocessing" title="I-Preprocessing"><span class="octicon octicon-link"></span></a><span>I. Preprocessing</span></h4><p><span>preprocessing的部分跟之前差不多，用pd.read_jason讀檔，刪掉不要的column及包含null的row。</span></p><p><span>從data中分出training, validation, testing。</span><br>
+<img src="https://i.imgur.com/gcLlrki.png" alt="" loading="lazy"></p><p><span>training就是拿來training用的，validation是拿來觀察每個epoch的accuracy情況，testing是最後選出最好的model拿來測試用的。</span><br>
+<span>最終的比例是0.8:0.1:0.1。</span><br>
+<img src="https://i.imgur.com/ITlDhCC.png" alt="" loading="lazy"></p><h4 id="II-Training" data-id="II-Training"><a class="anchor hidden-xs" href="#II-Training" title="II-Training"><span class="octicon octicon-link"></span></a><span>II. Training</span></h4><p><s><span>最輕鬆也最痛苦的部分</span></s></p><p><span>用for迴圈去跑每個epoch，如果accuracy比之前的都高就把當前的state及accuracy存起來。</span></p><pre><code class="python hljs"><div class="wrapper"><div class="gutter linenumber"><span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span>
+<span></span></div><div class="code"><span class="hljs-keyword">def</span> <span class="hljs-title function_">save_model</span>(<span class="hljs-params">best_accuracy, best_state_dict</span>):
+    <span class="hljs-keyword">global</span> filename
+    acc_string = <span class="hljs-string">"{:.2f}"</span>.<span class="hljs-built_in">format</span>(best_accuracy)
+    filename = <span class="hljs-string">f"<span class="hljs-subst">{EMOTION}</span>-<span class="hljs-subst">{dt.now().strftime(<span class="hljs-string">'%Y-%m-%d-%H-%M-%S'</span>)}</span>-<span class="hljs-subst">{acc_string}</span>.pkl"</span>
+    torch.save(best_state_dict, filename)
+
+filename = <span class="hljs-string">""</span>
+
+history = defaultdict(<span class="hljs-built_in">list</span>)
+
+best_accuracy = <span class="hljs-number">0.0</span>
+best_state_dict = {}
+
+<span class="hljs-keyword">for</span> epoch <span class="hljs-keyword">in</span> <span class="hljs-built_in">range</span>(EPOCHS):
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f'Epoch <span class="hljs-subst">{epoch + <span class="hljs-number">1</span>}</span>/<span class="hljs-subst">{EPOCHS}</span>'</span>)
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">'-'</span> * <span class="hljs-number">10</span>)
+
+    train_acc, train_loss = train_epoch(
+        model,
+        train_data_loader,    
+        loss_fn, 
+        optimizer, 
+        device, 
+        scheduler, 
+        <span class="hljs-built_in">len</span>(df_train)
+    )
+
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f'[Training] Loss: <span class="hljs-subst">{train_loss}</span> Accuracy: <span class="hljs-subst">{train_acc}</span>'</span>)
+
+    val_acc, val_loss = eval_model(
+        model,
+        val_data_loader,
+        loss_fn, 
+        device, 
+        <span class="hljs-built_in">len</span>(df_val)
+    )
+
+    <span class="hljs-built_in">print</span>(<span class="hljs-string">f'[Validation] Loss: <span class="hljs-subst">{val_loss}</span> Accuracy: <span class="hljs-subst">{val_acc}</span>'</span>)
+    <span class="hljs-built_in">print</span>()
+
+    history[<span class="hljs-string">'train_acc'</span>].append(train_acc)
+    history[<span class="hljs-string">'train_loss'</span>].append(train_loss)
+    history[<span class="hljs-string">'val_acc'</span>].append(val_acc)
+    history[<span class="hljs-string">'val_loss'</span>].append(val_loss)
+
+    <span class="hljs-keyword">if</span> val_acc &gt; best_accuracy:
+        best_accuracy = val_acc
+        best_state_dict = model.state_dict()
+        
+save_model(best_accuracy, best_state_dict)
+</div></div></code></pre><p><span>到這邊colab的效能已經不夠了，因此只能請擁有超強電腦的同學幫忙train，經過了漫長的兩個多小時，最終給出的結果不令人失望，準確率來到了0.89!</span><br>
+<img src="https://i.imgur.com/BWqZIWT.png" alt="" loading="lazy"></p><p><span>training的過程用折線圖展現。</span><br>
+<img src="https://i.imgur.com/ZKywC8V.png" alt="" loading="lazy"></p><p><span>用之前存好最好的model拿來預測test data，準確度終於突破0.9大關了，這樣的準確度連我自己都甘拜下風。</span><br>
+<img src="https://i.imgur.com/oLheyK9.png" alt="" loading="lazy"></p><p><span>performace:</span><br>
+<img src="https://i.imgur.com/mvDDNyG.png" alt="" loading="lazy"></p><p><span>confusion matrix:</span><br>
+<img src="https://i.imgur.com/mvo2zXk.png" alt="" loading="lazy"></p><h2 id="V-Results" data-id="V-Results"><a class="anchor hidden-xs" href="#V-Results" title="V-Results"><span class="octicon octicon-link"></span></a><span>V. Results</span></h2><p><span>結果的部分在model那邊已經講得差不多了。</span><br>
+<span>主要就是:</span></p><ol>
+<li><span>沒有tf-idf LogisticRegression &gt; MultinomialNB &gt; ANN</span></li>
+<li><span>經過tf-idf ANN &gt; LogisticRegression &gt; MultinomialNB</span></li>
+<li><span>Bert &gt;&gt;&gt; All</span></li>
+</ol><h2 id="VI-Conclusion" data-id="VI-Conclusion"><a class="anchor hidden-xs" href="#VI-Conclusion" title="VI-Conclusion"><span class="octicon octicon-link"></span></a><span>VI. Conclusion</span></h2><p><span>NLP真的不是一個好做的東西，單純的把文字編碼成數字的效果奇低，除非做一些轉換不然文字的深奧不是隨隨便便就能駕馭的。</span><br>
+<span>在做final project的過程讓我學到許多有關NLP的相關知識，也讓我對這方面更有興趣了，當作為了下學期的自然語言概論鋪路。</span></p><h2 id="Conclusion-amp-Application" data-id="Conclusion-amp-Application"><a class="anchor hidden-xs" href="#Conclusion-amp-Application" title="Conclusion-amp-Application"><span class="octicon octicon-link"></span></a><span>Conclusion &amp; Application</span></h2><p><span>感覺單純只看到accuracy和f1 score有點空虛，因此我做了一個簡單互動式的classifier，這樣可以更好的測試及了解model的性能。因此我就拿了基本三個model中表現最好的tf-idf加ANN。</span></p><p><span>功能就是輸入一則評論，機器會回復"positive review!“或"negative review :(”。</span></p><p><span>先輸入了一些常見的評論，大部分都是對的，除了少數比較容易混淆的像是"not bad"，本意為不錯，但兩個字都是負面的，因此機器錯誤判斷為負面評論。</span><br>
+<img src="https://i.imgur.com/6O4CBNS.png" alt="" loading="lazy"></p><p><span>再來從dataset裡面找一些評論，基本上都是對的，除了"I prefer L4D"這句幾乎都是中性詞語的句子，很難辨別出正負，但對人類來說非常簡單，可見單純的tf-idf也有許多做不到的地方。</span><br>
+<img src="https://i.imgur.com/TB8UlV4.png" alt="" loading="lazy"></p></div>
+    <div class="ui-toc dropup unselectable hidden-print" style="display:none;">
+        <div class="pull-right dropdown">
+            <a id="tocLabel" class="ui-toc-label btn btn-default" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" title="Table of content">
+                <i class="fa fa-bars"></i>
+            </a>
+            <ul id="ui-toc" class="ui-toc-dropdown dropdown-menu" aria-labelledby="tocLabel">
+                <div class="toc"><ul class="nav">
+<li><a href="#Steam-review-sentiment-classification" title="Steam review sentiment classification">Steam review sentiment classification</a><ul class="nav">
+<li><a href="#I-Introduction" title="I. Introduction:">I. Introduction:</a></li>
+<li><a href="#II-Data-Collection" title="II. Data Collection">II. Data Collection</a></li>
+<li><a href="#III-Preprocessing" title="III. Preprocessing">III. Preprocessing</a></li>
+<li><a href="#IV-Models" title="IV. Models">IV. Models</a><ul class="nav">
+<li><a href="#1-Without-tf-idf" title="1. Without tf-idf">1. Without tf-idf</a></li>
+<li><a href="#2-With-tf-idf" title="2. With tf-idf">2. With tf-idf</a></li>
+<li><a href="#Bidirectional-Encoder-Representations-from-Transformers簡稱Bert" title="Bidirectional Encoder Representations from Transformers(簡稱Bert)">Bidirectional Encoder Representations from Transformers(簡稱Bert)</a></li>
+</ul>
+</li>
+<li><a href="#V-Results" title="V. Results">V. Results</a></li>
+<li><a href="#VI-Conclusion" title="VI. Conclusion">VI. Conclusion</a></li>
+<li><a href="#Conclusion-amp-Application" title="Conclusion &amp; Application">Conclusion &amp; Application</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+            </ul>
+        </div>
+    </div>
+    <div id="ui-toc-affix" class="ui-affix-toc ui-toc-dropdown unselectable hidden-print" data-spy="affix" style="top:17px;display:none;" null null>
+        <div class="toc"><ul class="nav">
+<li><a href="#Steam-review-sentiment-classification" title="Steam review sentiment classification">Steam review sentiment classification</a><ul class="nav">
+<li><a href="#I-Introduction" title="I. Introduction:">I. Introduction:</a></li>
+<li><a href="#II-Data-Collection" title="II. Data Collection">II. Data Collection</a></li>
+<li><a href="#III-Preprocessing" title="III. Preprocessing">III. Preprocessing</a></li>
+<li><a href="#IV-Models" title="IV. Models">IV. Models</a><ul class="nav">
+<li><a href="#1-Without-tf-idf" title="1. Without tf-idf">1. Without tf-idf</a></li>
+<li><a href="#2-With-tf-idf" title="2. With tf-idf">2. With tf-idf</a></li>
+<li><a href="#Bidirectional-Encoder-Representations-from-Transformers簡稱Bert" title="Bidirectional Encoder Representations from Transformers(簡稱Bert)">Bidirectional Encoder Representations from Transformers(簡稱Bert)</a></li>
+</ul>
+</li>
+<li><a href="#V-Results" title="V. Results">V. Results</a></li>
+<li><a href="#VI-Conclusion" title="VI. Conclusion">VI. Conclusion</a></li>
+<li><a href="#Conclusion-amp-Application" title="Conclusion &amp; Application">Conclusion &amp; Application</a></li>
+</ul>
+</li>
+</ul>
+</div><div class="toc-menu"><a class="expand-toggle" href="#">Expand all</a><a class="back-to-top" href="#">Back to top</a><a class="go-to-bottom" href="#">Go to bottom</a></div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gist-embed/2.6.0/gist-embed.min.js" integrity="sha256-KyF2D6xPIJUW5sUDSs93vWyZm+1RzIpKCexxElmxl8g=" crossorigin="anonymous" defer></script>
+    <script>
+        var markdown = $(".markdown-body");
+        //smooth all hash trigger scrolling
+        function smoothHashScroll() {
+            var hashElements = $("a[href^='#']").toArray();
+            for (var i = 0; i < hashElements.length; i++) {
+                var element = hashElements[i];
+                var $element = $(element);
+                var hash = element.hash;
+                if (hash) {
+                    $element.on('click', function (e) {
+                        // store hash
+                        var hash = this.hash;
+                        if ($(hash).length <= 0) return;
+                        // prevent default anchor click behavior
+                        e.preventDefault();
+                        // animate
+                        $('body, html').stop(true, true).animate({
+                            scrollTop: $(hash).offset().top
+                        }, 100, "linear", function () {
+                            // when done, add hash to url
+                            // (default click behaviour)
+                            window.location.hash = hash;
+                        });
+                    });
+                }
+            }
+        }
+
+        smoothHashScroll();
+        var toc = $('.ui-toc');
+        var tocAffix = $('.ui-affix-toc');
+        var tocDropdown = $('.ui-toc-dropdown');
+        //toc
+        tocDropdown.click(function (e) {
+            e.stopPropagation();
+        });
+
+        var enoughForAffixToc = true;
+
+        function generateScrollspy() {
+            $(document.body).scrollspy({
+                target: ''
+            });
+            $(document.body).scrollspy('refresh');
+            if (enoughForAffixToc) {
+                toc.hide();
+                tocAffix.show();
+            } else {
+                tocAffix.hide();
+                toc.show();
+            }
+            $(document.body).scroll();
+        }
+
+        function windowResize() {
+            //toc right
+            var paddingRight = parseFloat(markdown.css('padding-right'));
+            var right = ($(window).width() - (markdown.offset().left + markdown.outerWidth() - paddingRight));
+            toc.css('right', right + 'px');
+            //affix toc left
+            var newbool;
+            var rightMargin = (markdown.parent().outerWidth() - markdown.outerWidth()) / 2;
+            //for ipad or wider device
+            if (rightMargin >= 133) {
+                newbool = true;
+                var affixLeftMargin = (tocAffix.outerWidth() - tocAffix.width()) / 2;
+                var left = markdown.offset().left + markdown.outerWidth() - affixLeftMargin;
+                tocAffix.css('left', left + 'px');
+            } else {
+                newbool = false;
+            }
+            if (newbool != enoughForAffixToc) {
+                enoughForAffixToc = newbool;
+                generateScrollspy();
+            }
+        }
+        $(window).resize(function () {
+            windowResize();
+        });
+        $(document).ready(function () {
+            windowResize();
+            generateScrollspy();
+        });
+
+        //remove hash
+        function removeHash() {
+            window.location.hash = '';
+        }
+
+        var backtotop = $('.back-to-top');
+        var gotobottom = $('.go-to-bottom');
+
+        backtotop.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToTop)
+                scrollToTop();
+            removeHash();
+        });
+        gotobottom.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (scrollToBottom)
+                scrollToBottom();
+            removeHash();
+        });
+
+        var toggle = $('.expand-toggle');
+        var tocExpand = false;
+
+        checkExpandToggle();
+        toggle.click(function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            tocExpand = !tocExpand;
+            checkExpandToggle();
+        })
+
+        function checkExpandToggle () {
+            var toc = $('.ui-toc-dropdown .toc');
+            var toggle = $('.expand-toggle');
+            if (!tocExpand) {
+                toc.removeClass('expand');
+                toggle.text('Expand all');
+            } else {
+                toc.addClass('expand');
+                toggle.text('Collapse all');
+            }
+        }
+
+        function scrollToTop() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: 0
+            }, 100, "linear");
+        }
+
+        function scrollToBottom() {
+            $('body, html').stop(true, true).animate({
+                scrollTop: $(document.body)[0].scrollHeight
+            }, 100, "linear");
+        }
+    </script>
+</body>
+
+</html>
